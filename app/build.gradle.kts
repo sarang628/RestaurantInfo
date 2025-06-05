@@ -61,6 +61,7 @@ android {
 dependencies {
     /** HILT */
     implementation(libs.hilt)
+    implementation(project(":library"))
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.nav.compose) // hiltViewModel
 
@@ -97,4 +98,8 @@ dependencies {
     implementation(libs.material3) //JetNews Main 따라하기
     implementation(libs.material3.windows.size)
     implementation(libs.lifecycle.runtime.compose)
+
+    implementation(libs.torangRepository)
+    implementation(libs.theme)
+    implementation(libs.commonImageLoader)
 }

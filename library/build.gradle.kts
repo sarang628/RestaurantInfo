@@ -9,16 +9,14 @@ plugins {
 }
 
 android {
+    compileSdk = rootProject.extra["compileSdk"] as Int
     namespace = "com.sarang.torang"
-    compileSdk = 35
-
     defaultConfig {
-        minSdk = 24
-
+        minSdk = rootProject.extra["minSdk"] as Int
+        targetSdk = rootProject.extra["targetSdk"] as Int
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
+        testInstrumentationRunner = "com.sarang.torang.CustomTestRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -29,11 +27,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "11"
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.6"
     }
 }
 
