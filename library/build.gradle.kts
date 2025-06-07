@@ -68,3 +68,20 @@ dependencies {
     implementation(libs.material3.windows.size)
     implementation(libs.lifecycle.runtime.compose)
 }
+
+afterEvaluate {
+    tasks.matching { it.name.startsWith("generate") && it.name.endsWith("BuildConfig") }.configureEach {
+        enabled = false
+    }
+
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.jitpack"
+                artifactId = "android-example"
+                version = "1.0"
+            }
+        }
+    }
+}
