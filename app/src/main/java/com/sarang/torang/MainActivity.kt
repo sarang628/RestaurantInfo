@@ -13,6 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import com.sarang.torang.di.image.customImageLoader
 import com.sarang.torang.di.restaurant_info.RestaurantInfoWithPermissionWithLocation
+import com.sarang.torang.di.restaurant_info.restaurantInfo
 import com.sryang.torang.ui.TorangTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,21 +27,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CompositionLocalProvider(LocalImageLoader provides customImageLoader)
+                    CompositionLocalProvider(LocalImageLoader provides customImageLoader, LocalRestaurantInfo provides restaurantInfo)
                     {
                         //RestaurantInfo_(restaurantId = 234)
-                        RestaurantInfoWithPermissionWithLocation(234)
+                        //RestaurantInfoWithPermissionWithLocation(234)
+                        LocalRestaurantInfo.current.invoke(234, {}, {}, {})
                     }
                 }
             }
         }
-    }
-
-    @RequiresPermission(
-        anyOf = [android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION],
-    )
-    @Composable
-    fun RestaurantInfoWithPermissionWithLocationTest() {
-
     }
 }

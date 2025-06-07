@@ -1,6 +1,7 @@
 package com.sarang.torang.di.restaurant_info
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,6 +21,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.location.LocationServices
+import com.sarang.torang.RestaurantInfo
 import com.sarang.torang.RestaurantInfo_
 import com.sryang.library.compose.workflow.BestPracticeViewModel
 import com.sryang.library.compose.workflow.MoveSystemSettingDialog
@@ -39,15 +41,18 @@ import kotlinx.coroutines.tasks.await
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun RestaurantInfoWithPermission(
+    tag: String = "__RestaurantInfoWithPermission",
     viewModel: BestPracticeViewModel,
-    permission : String = Manifest.permission.ACCESS_FINE_LOCATION,
     onRequestLocation : ()->Unit = {},
     currentLatitude : Double? = null,
     currentLongitude : Double? = null,
-    restaurantId : Int
+    restaurantId : Int,
+    onLocation: () -> Unit = { Log.w(tag, "onLocation doesn't set") },
+    onWeb: (String) -> Unit = { Log.w(tag, "onWeb doesn't set") },
+    onCall: (String) -> Unit = { Log.w(tag, "onCall doesn't set") },
 ){
     var timeDiff : Long by remember { mutableLongStateOf(0L) } // 2번 권한 거부 시 시스템 이동 다이얼로그를 띄우는 조건
-    val requestPermission = rememberPermissionState(permission, { viewModel.permissionResult(it, System.currentTimeMillis() - timeDiff) })
+    val requestPermission = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION, { viewModel.permissionResult(it, System.currentTimeMillis() - timeDiff) })
     val state = viewModel.state
 
     when (state) {
@@ -68,13 +73,21 @@ fun RestaurantInfoWithPermission(
             currentLatitude = currentLatitude,
             restaurantId = restaurantId,
             isLocationPermissionGranted = requestPermission.status.isGranted,
-            onRequestPermission = { viewModel.request() },
+            onLocation = onLocation,
+            onWeb = onWeb,
+            onCall = onCall,
+            onRequestPermission = { viewModel.request() }
         )
     }
 }
 
 @Composable
-fun RestaurantInfoWithPermissionWithLocation(restaurantId : Int) {
+fun RestaurantInfoWithPermissionWithLocation(
+    tag : String = "__RestaurantInfoWithPermissionWithLocation",
+    restaurantId : Int,
+    onLocation: () -> Unit = { Log.w(tag, "onLocation doesn't set") },
+    onWeb: (String) -> Unit = { Log.w(tag, "onWeb doesn't set") },
+    onCall: (String) -> Unit = { Log.w(tag, "onCall doesn't set") },) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val locationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
@@ -95,4 +108,8 @@ fun RestaurantInfoWithPermissionWithLocation(restaurantId : Int) {
             currentLongitude = result.longitude
         }
     }, currentLatitude = currentLatitude, currentLongitude = currentLongitude, restaurantId = restaurantId)
+}
+
+val restaurantInfo: RestaurantInfo = { restaurantId, onLocation, onWeb, onCall ->
+    RestaurantInfoWithPermissionWithLocation(restaurantId = restaurantId, onLocation = onLocation, onWeb = onWeb, onCall = onCall)
 }

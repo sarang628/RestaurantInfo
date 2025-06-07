@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 
+/**
+ * ## 음식점 정보
+ * - 음식점 상호, 평점, 음식 종류, 거리, 가격, 주소, 웹사이트, 운영시간, 전화번호
+ * - 권한과 위치 요청에 관한 기능은 제공하지 않음.
+ */
 @Composable
 fun RestaurantInfo_(
     viewModel: RestaurantInfoViewModel = hiltViewModel(),
@@ -42,14 +48,14 @@ fun RestaurantInfo_(
     currentLatitude: Double? = null,
     currentLongitude: Double? = null,
     modifier: Modifier = Modifier,
+    progressTintColor: Color? = null,
+    isLocationPermissionGranted: Boolean = false,
     onLocation: () -> Unit = { Log.w(tag, "onLocation doesn't set") },
     onWeb: (String) -> Unit = { Log.w(tag, "onWeb doesn't set") },
     onCall: (String) -> Unit = { Log.w(tag, "onCall doesn't set") },
-    progressTintColor: Color? = null,
-    isLocationPermissionGranted: Boolean = false,
     onRequestPermission: () -> Unit = { Log.w(tag, "onRequestPermission doesn't set") },
 ) {
-    var restaurantInfoData = viewModel.uiState
+    var restaurantInfoData : RestaurantInfoData = viewModel.uiState
     LaunchedEffect(restaurantId) {
         try {
             viewModel.fetchRestaurantInfo1(restaurantId)
@@ -189,4 +195,16 @@ fun PreviewRestaurantInfo1() {
         modifier = Modifier.verticalScroll(rememberScrollState()),
         restaurantInfoData = restaurantInfoData
     )
+}
+
+typealias RestaurantInfo = @Composable (restaurantId : Int,
+                                        onLocation: () -> Unit,
+                                        onWeb: (String) -> Unit,
+                                        onCall: (String) -> Unit) -> Unit
+
+val LocalRestaurantInfo = compositionLocalOf<RestaurantInfo> {
+    // 기본 구현: 경고 로그 출력
+    @Composable { _, _, _, _->
+        Log.w("__LocalRestaurantInfo", "No LocalRestaurantInfo provided.")
+    }
 }
