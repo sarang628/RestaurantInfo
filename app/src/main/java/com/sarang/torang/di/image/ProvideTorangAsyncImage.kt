@@ -1,4 +1,4 @@
-package com.sarang.torang.di.image1
+package com.sarang.torang.di.image
 
 import TorangAsyncImage
 import androidx.compose.runtime.Composable
