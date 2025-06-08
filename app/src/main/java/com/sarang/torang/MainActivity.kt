@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import com.sarang.torang.di.image1.customImageLoader
+import com.sarang.torang.di.image3.customImageLoader
 import com.sarang.torang.di.restaurant_info.restaurantInfo
 import com.sryang.torang.ui.TorangTheme
 import dagger.hilt.android.AndroidEntryPoint
