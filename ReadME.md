@@ -93,4 +93,24 @@ implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
 ```
 git clone https://github.com/sarang628/restauarnt_info_di.git
+
+git clone https://github.com/sarang628/repository.git
 ```
+
+```
+implementation("com.github.sarang628:RestaurantInfo:62628e5b8e")
+implementation("com.github.sarang628:CommonImageLoader:1999de5a48")
+implementation("com.google.dagger:hilt-android:2.46")
+kapt("com.google.dagger:hilt-android-compiler:2.46")
+implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+implementation("com.github.sarang628:TorangRepository:e0d12661da")
+
+implementation("com.squareup.retrofit2:retrofit:2.9.0")
+implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+implementation("androidx.room:room-runtime:2.5.1")
+annotationProcessor("androidx.room:room-compiler:2.5.1")
+implementation("androidx.room:room-paging:2.5.1")
+```
+
