@@ -4,6 +4,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+//    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -53,9 +54,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
     }
 
-    hilt {
-        enableTransformForLocalTests = true
-    }
+//    hilt {
+//        enableTransformForLocalTests = true
+//    }
 }
 
 dependencies {

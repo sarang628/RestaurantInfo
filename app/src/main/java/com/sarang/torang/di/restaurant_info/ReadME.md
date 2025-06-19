@@ -1,60 +1,3 @@
-# 음식점 정보 화면 모듈
-
-```
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-    }
-}
-
-dependencies {
-    implementation("com.github.sarang628:RestaurantInfo:62628e5b8e")
-}
-```
-
-```kotlin
-RestaurantInfo(restaurantInfoData = RestaurantInfoData.dummy1())
-```
-
-
-## 이미지 로드 모듈 추가
-
-```
-cd app/src/main/java/[package]/di
-git submodule add (or git clone) https://github.com/sarang628/image.git
-```
-
-```
-cd app/src/main/java/[package]/di
-git submodule add (or git clone) https://github.com/sarang628/pinchzoom.git
-```
-
-```
-implementation("com.github.sarang628:CommonImageLoader:1999de5a48") 
-```
-
-``` kotlin
-val customImageLoader: RestaurantInfoImageLoader = { modifier, url, width, height, scale ->
-    // 여기서 실제 이미지 로딩 구현 예시
-    provideTorangAsyncImage().invoke(modifier, url, width, height, scale)
-}
-```
-
-``` kotlin
-CompositionLocalProvider(LocalImageLoader provides customImageLoader) {
-    RestaurantInfo(
-        restaurantInfoData = RestaurantInfoData.dummy1()
-    )
-}
-```
-
-## 위치 권한 모듈 추가
-
-```
-git submodule add (or git clone) https://github.com/sarang628/restauarnt_info_di.git
-```
 
 ```
 android.buildFeatures.buildConfig = true
@@ -81,7 +24,7 @@ buildTypes {
         signingConfig = signingConfigs.getByName("debug")
     }
 }
- 
+
 implementation("com.github.sarang628:ComposePermissionTest:5159bc3d34")
 implementation("com.github.sarang628:TorangRepository:e0d12661da")
 implementation("com.google.accompanist:accompanist-permissions:0.32.0")
@@ -89,8 +32,27 @@ implementation("com.google.android.gms:play-services-location:21.1.0")
 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 ```
 
-## 
+hilt 추가
 
 ```
-git clone https://github.com/sarang628/restauarnt_info_di.git
+build.gradle
+plugins {
+  ...
+  id("com.google.dagger.hilt.android") version "2.56.2" apply false
+}
+
+app/build.gradle
+plugins {
+  id("com.google.devtools.ksp")
+  id("com.google.dagger.hilt.android")
+}
+
+android {
+  ...
+}
+
+dependencies {
+  implementation("com.google.dagger:hilt-android:2.56.2")
+  ksp("com.google.dagger:hilt-android-compiler:2.56.2")
+}
 ```
