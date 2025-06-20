@@ -1,5 +1,6 @@
 # 음식점 정보 화면 모듈
 
+jitpack에서 모듈 다운을 위한 의존성 추가
 ```
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -14,6 +15,7 @@ dependencies {
 }
 ```
 
+뷰모델 없는 순수 UI 사용
 ```kotlin
 RestaurantInfo(restaurantInfoData = RestaurantInfoData.dummy1())
 ```
@@ -21,20 +23,22 @@ RestaurantInfo(restaurantInfoData = RestaurantInfoData.dummy1())
 
 ## 이미지 로드 모듈 추가
 
+이미지 로드 모듈 단일 버전 관리를 위해 루트 프로젝트에서 구현하고 하위 프로젝트들은 인터페이스만 받음.
 ```
 cd app/src/main/java/[package]/di
 git submodule add (or git clone) https://github.com/sarang628/image.git
 ```
-
+이미지 로드 모듈에 줌 처리 기능이 추가되 추가 모듈 설정 필요.
 ```
 cd app/src/main/java/[package]/di
 git submodule add (or git clone) https://github.com/sarang628/pinchzoom.git
 ```
-
+이미지 로드 모듈 다운로드
 ```
 implementation("com.github.sarang628:CommonImageLoader:1999de5a48") 
 ```
 
+자식 모듈에 내려 줄 인터페이스 부모 프로젝트에 추가하기
 ``` kotlin
 val customImageLoader: RestaurantInfoImageLoader = { modifier, url, width, height, scale ->
     // 여기서 실제 이미지 로딩 구현 예시
@@ -50,11 +54,50 @@ CompositionLocalProvider(LocalImageLoader provides customImageLoader) {
 }
 ```
 
-## 위치 권한 모듈 추가
+## 뷰모델 사용
+
+### hilt 추가하기
+```
+root/gradle
+id("com.google.dagger.hilt.android") version "2.46" apply false
+
+app/gradle
+id("kotlin-kapt")
+id("dagger.hilt.android.plugin")
+
+implementation("com.google.dagger:hilt-android:2.46")
+kapt("com.google.dagger:hilt-android-compiler:2.46")
+```
+
+### usecase 구현 코드 추가 
 
 ```
 git submodule add (or git clone) https://github.com/sarang628/restauarnt_info_di.git
 ```
+
+### API 호출 저장소 추가
+```
+implementation("com.github.sarang628:TorangRepository:e0d12661da")
+
+implementation("com.squareup.retrofit2:retrofit:2.9.0")
+implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+implementation("androidx.room:room-runtime:2.5.1")
+annotationProcessor("androidx.room:room-compiler:2.5.1")
+implementation("androidx.room:room-paging:2.5.1")
+```
+
+
+### 위치 권한 모듈 추가
+
+```
+git submodule add (or git clone) https://github.com/sarang628/restauarnt_info_di.git
+git submodule add (or git clone) https://github.com/sarang628/repository.git
+```
+
+### buidconfig 추가
+
 
 ```
 android.buildFeatures.buildConfig = true
@@ -83,34 +126,7 @@ buildTypes {
 }
  
 implementation("com.github.sarang628:ComposePermissionTest:5159bc3d34")
-implementation("com.github.sarang628:TorangRepository:e0d12661da")
 implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 implementation("com.google.android.gms:play-services-location:21.1.0")
 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 ```
-
-## 
-
-```
-git clone https://github.com/sarang628/restauarnt_info_di.git
-
-git clone https://github.com/sarang628/repository.git
-```
-
-```
-implementation("com.github.sarang628:RestaurantInfo:62628e5b8e")
-implementation("com.github.sarang628:CommonImageLoader:1999de5a48")
-implementation("com.google.dagger:hilt-android:2.46")
-kapt("com.google.dagger:hilt-android-compiler:2.46")
-implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-implementation("com.github.sarang628:TorangRepository:e0d12661da")
-
-implementation("com.squareup.retrofit2:retrofit:2.9.0")
-implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
-
-implementation("androidx.room:room-runtime:2.5.1")
-annotationProcessor("androidx.room:room-compiler:2.5.1")
-implementation("androidx.room:room-paging:2.5.1")
-```
-
