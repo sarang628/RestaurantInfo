@@ -89,44 +89,17 @@ implementation("androidx.room:room-paging:2.5.1")
 ```
 
 
-### 위치 권한 모듈 추가
+## 음식점과의 거리 계산을 위한 위치 권한 기능 추가
 
 ```
-git submodule add (or git clone) https://github.com/sarang628/restauarnt_info_di.git
-git submodule add (or git clone) https://github.com/sarang628/repository.git
-```
-
-### buidconfig 추가
-
-
-```
-android.buildFeatures.buildConfig = true
-
-buildTypes {
-    getByName("debug") {
-        buildConfigField("String", "SERVER_URL", "\"http://sarang628.iptime.org\"")
-        buildConfigField("String", "IMAGE_PORT", "\"89\"")
-        buildConfigField("String", "PROFILE_IMAGE_SERVER_URL", "\"http://sarang628.iptime.org:89/profile_images/\"")
-        buildConfigField("String", "REVIEW_IMAGE_SERVER_URL", "\"http://sarang628.iptime.org:89/review_images/\"")
-        buildConfigField("String", "RESTAURANT_IMAGE_SERVER_URL", "\"http://sarang628.iptime.org:89/restaurant_images/\"")
-        buildConfigField("String", "MENU_IMAGE_SERVER_URL", "\"http://sarang628.iptime.org:89/menu_images/\"")
-    }
-
-    getByName("release") {
-        buildConfigField("String", "SERVER_URL", "\"http://sarang628.iptime.org\"")
-        buildConfigField("String", "IMAGE_PORT", "\"89\"")
-        buildConfigField("String", "PROFILE_IMAGE_SERVER_URL", "\"http://sarang628.iptime.org:89/profile_images/\"")
-        buildConfigField("String", "REVIEW_IMAGE_SERVER_URL", "\"http://sarang628.iptime.org:89/review_images/\"")
-        buildConfigField("String", "RESTAURANT_IMAGE_SERVER_URL", "\"http://sarang628.iptime.org:89/restaurant_images/\"")
-        buildConfigField("String", "MENU_IMAGE_SERVER_URL", "\"http://sarang628.iptime.org:89/menu_images/\"")
-        isMinifyEnabled = false
-        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        signingConfig = signingConfigs.getByName("debug")
-    }
-}
- 
-implementation("com.github.sarang628:ComposePermissionTest:5159bc3d34")
 implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+implementation("com.github.sarang628:ComposePermissionTest:5159bc3d34")
 implementation("com.google.android.gms:play-services-location:21.1.0")
 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+```
+
+```
+CompositionLocalProvider(LocalImageLoader provides customImageLoader) {
+    RestaurantInfoWithPermission(restaurantId = 234, viewModel = BestPracticeViewModel())
+}
 ```
