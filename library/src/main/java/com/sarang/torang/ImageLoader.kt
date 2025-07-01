@@ -15,7 +15,7 @@ typealias RestaurantInfoImageLoader = @Composable (
     contentScale: ContentScale?
 ) -> Unit
 
-val LocalImageLoader = compositionLocalOf<RestaurantInfoImageLoader> {
+val LocalRestaurantInfoImageLoader = compositionLocalOf<RestaurantInfoImageLoader> {
     // 기본 구현: 경고 로그 출력
     @Composable { _, _, _, _, _ ->
         Log.w("__RestaurantInfoImageLoader", "No ImageLoader provided.")

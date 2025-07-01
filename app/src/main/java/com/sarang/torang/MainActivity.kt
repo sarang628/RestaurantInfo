@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CompositionLocalProvider(LocalImageLoader provides customImageLoader, LocalRestaurantInfo provides restaurantInfo)
+                    CompositionLocalProvider(LocalRestaurantInfoImageLoader provides customImageLoader, LocalRestaurantInfo provides restaurantInfo)
                     {
                         //RestaurantInfo_(restaurantId = 234)
                         //RestaurantInfoWithPermissionWithLocation(234)

@@ -98,7 +98,7 @@ fun RestaurantInfo(
     //@formatter:off
     Column(modifier = modifier) {
         Box (modifier = Modifier.fillMaxWidth().height(300.dp)){ // 음식점명 + 평점 박스
-            LocalImageLoader.current.invoke(Modifier.fillMaxSize(), restaurantInfoData.imageUrl, null, null, ContentScale.Crop)
+            LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), restaurantInfoData.imageUrl, null, null, ContentScale.Crop)
             RestaurantTitleAndRating  (modifier = Modifier.align(Alignment.BottomEnd), restaurantName = restaurantInfoData.name, rating = restaurantInfoData.rating, reviewCount = restaurantInfoData.reviewCount, progressTintColor = progressTintColor)
         }
         Row { // 음식점 종류, 거리, 가격
