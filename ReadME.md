@@ -15,28 +15,7 @@ dependencies {
 }
 ```
 
-뷰모델 없는 순수 UI 사용
-```kotlin
-RestaurantInfo(restaurantInfoData = RestaurantInfoData.dummy1())
-```
-
-
-## 이미지 로드 모듈 추가
-
-이미지 로드 모듈 단일 버전 관리를 위해 루트 프로젝트에서 구현하고 하위 프로젝트들은 인터페이스만 받음.
-```
-cd app/src/main/java/[package]/di
-git submodule add (or git clone) https://github.com/sarang628/image.git
-```
-이미지 로드 모듈에 줌 처리 기능이 추가되 추가 모듈 설정 필요.
-```
-cd app/src/main/java/[package]/di
-git submodule add (or git clone) https://github.com/sarang628/pinchzoom.git
-```
-이미지 로드 모듈 다운로드
-```
-implementation("com.github.sarang628:CommonImageLoader:1999de5a48") 
-```
+## [이미지 모듈 추가](https://github.com/sarang628/CommonImageLoader?tab=readme-ov-file#%EC%9D%B4%EB%AF%B8%EC%A7%80-%EB%A1%9C%EB%93%9C-%EB%AA%A8%EB%93%88-%EC%B6%94%EA%B0%80)
 
 자식 모듈에 내려 줄 인터페이스 부모 프로젝트에 추가하기
 ``` kotlin
@@ -64,18 +43,7 @@ CompositionLocalProvider(LocalImageLoader provides customImageLoader) {
 git submodule add (or git clone) https://github.com/sarang628/restauarnt_info_di.git
 ```
 
-### API 호출 저장소 추가
-```
-implementation("com.github.sarang628:TorangRepository:e0d12661da")
-
-implementation("com.squareup.retrofit2:retrofit:2.9.0")
-implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
-
-implementation("androidx.room:room-runtime:2.5.1")
-annotationProcessor("androidx.room:room-compiler:2.5.1")
-implementation("androidx.room:room-paging:2.5.1")
-```
+## [usecase에 필요한 저장소를 추가](https://github.com/sarang628/TorangRepository?tab=readme-ov-file#%EB%AA%A8%EB%93%88-%EC%B6%94%EA%B0%80%ED%95%98%EA%B8%B0)
 
 
 ## 음식점과의 거리 계산을 위한 위치 권한 기능 추가
