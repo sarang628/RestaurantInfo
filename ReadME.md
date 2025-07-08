@@ -56,18 +56,7 @@ CompositionLocalProvider(LocalImageLoader provides customImageLoader) {
 
 ## 뷰모델 사용
 
-### hilt 추가하기
-```
-root/gradle
-id("com.google.dagger.hilt.android") version "2.46" apply false
-
-app/gradle
-id("kotlin-kapt")
-id("dagger.hilt.android.plugin")
-
-implementation("com.google.dagger:hilt-android:2.46")
-kapt("com.google.dagger:hilt-android-compiler:2.46")
-```
+## [Hilt 추가](https://github.com/sarang628/HiltTest?tab=readme-ov-file#for-torang)
 
 ### usecase 구현 코드 추가 
 
