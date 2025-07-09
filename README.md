@@ -11,7 +11,7 @@ dependencyResolutionManagement {
 }
 
 dependencies {
-    implementation("com.github.sarang628:RestaurantInfo:62628e5b8e")
+    implementation("com.github.sarang628:RestaurantInfo:b922514012")
 }
 ```
 
