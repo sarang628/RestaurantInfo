@@ -1,5 +1,6 @@
 package com.sarang.torang
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -37,6 +38,7 @@ class RestaurantInfoViewModel @Inject constructor(
     }
 
     fun setCurrentLocation(latitude: Double, longitude: Double) {
+        Log.d(tag, "setCurrentLocation: ${latitude}, ${longitude}}")
         uiState = uiState.copy(myLatitude = latitude, myLongitude = longitude)
     }
 }

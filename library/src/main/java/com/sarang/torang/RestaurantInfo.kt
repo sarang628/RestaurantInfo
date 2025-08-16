@@ -96,6 +96,7 @@ fun RestaurantInfo(
     isLocationPermissionGranted: Boolean = false,
 ) {
     //@formatter:off
+    Log.d(tag, "recomposition restaurantInfo: ${restaurantInfoData}")
     Column(modifier = modifier) {
         Box (modifier = Modifier.fillMaxWidth().height(300.dp)){ // 음식점명 + 평점 박스
             LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), restaurantInfoData.imageUrl, null, null, ContentScale.Crop)
