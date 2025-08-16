@@ -19,10 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TorangTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     CompositionLocalProvider(LocalRestaurantInfoImageLoader provides customImageLoader, LocalRestaurantInfo provides restaurantInfo)
                     {
                         //RestaurantInfo_(restaurantId = 234)
