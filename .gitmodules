@@ -7,3 +7,6 @@
 [submodule "app/src/main/java/com/sarang/torang/di/pinchzoom"]
 	path = app/src/main/java/com/sarang/torang/di/pinchzoom
 	url = https://github.com/sarang628/pinchzoom.git
+[submodule "app/src/main/java/com/sarang/torang/di/restauarnt_info_di"]
+	path = app/src/main/java/com/sarang/torang/di/restauarnt_info_di
+	url = https://github.com/sarang628/restauarnt_info_di.git
