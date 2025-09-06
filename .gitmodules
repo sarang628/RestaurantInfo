@@ -10,3 +10,9 @@
 [submodule "app/src/main/java/com/sarang/torang/di/restauarnt_info_di"]
 	path = app/src/main/java/com/sarang/torang/di/restauarnt_info_di
 	url = https://github.com/sarang628/restauarnt_info_di.git
+[submodule "app/src/main/java/com/sarang/torang/di/torang_network_di"]
+	path = app/src/main/java/com/sarang/torang/di/torang_network_di
+	url = https://github.com/sarang628/torang_network_di.git
+[submodule "app/src/main/java/com/sarang/torang/di/torang_database_di"]
+	path = app/src/main/java/com/sarang/torang/di/torang_database_di
+	url = https://github.com/sarang628/torang_database_di.git

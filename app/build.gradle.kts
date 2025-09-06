@@ -101,6 +101,8 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
 
     implementation(libs.torangRepository)
+    implementation(libs.torangnetwork)
+    implementation(libs.torangdatabase)
     implementation(libs.theme)
     implementation(libs.commonImageLoader)
     implementation(libs.accompanist.permissions)
