@@ -18,23 +18,27 @@ class RestaurantInfoViewModel @Inject constructor(
         private set
 
     suspend fun fetchRestaurantInfo1(restaurantId: Int) {
-        var result = getRestaurantInfoUseCase.invoke(restaurantId)
-        uiState = uiState.copy(
-            foodType = result.foodType,
-            open = result.open,
-            close = result.close,
-            address = result.address,
-            webSite = result.webSite,
-            tel = result.tel,
-            imageUrl = result.imageUrl,
-            name = result.name,
-            hoursOfOperation = result.hoursOfOperation,
-            rating = result.rating,
-            price = result.price,
-            reviewCount = result.reviewCount,
-            lat = result.lat,
-            lon = result.lon
-        )
+        try {
+            val result = getRestaurantInfoUseCase.invoke(restaurantId)
+            uiState = uiState.copy(
+                foodType = result.foodType,
+                open = result.open,
+                close = result.close,
+                address = result.address,
+                webSite = result.webSite,
+                tel = result.tel,
+                imageUrl = result.imageUrl,
+                name = result.name,
+                hoursOfOperation = result.hoursOfOperation,
+                rating = result.rating,
+                price = result.price,
+                reviewCount = result.reviewCount,
+                lat = result.lat,
+                lon = result.lon
+            )
+        }catch (e : Exception){
+            Log.e(tag, "$e")
+        }
     }
 
     fun setCurrentLocation(latitude: Double, longitude: Double) {

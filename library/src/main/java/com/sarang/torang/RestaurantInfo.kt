@@ -42,27 +42,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
  */
 @Composable
 fun RestaurantInfo_(
-    viewModel: RestaurantInfoViewModel = hiltViewModel(),
-    tag: String = "__RestaurantInfo",
-    restaurantId: Int,
-    currentLatitude: Double? = null,
-    currentLongitude: Double? = null,
-    modifier: Modifier = Modifier,
-    progressTintColor: Color? = null,
-    isLocationPermissionGranted: Boolean = false,
-    onLocation: () -> Unit = { Log.w(tag, "onLocation doesn't set") },
-    onWeb: (String) -> Unit = { Log.w(tag, "onWeb doesn't set") },
-    onCall: (String) -> Unit = { Log.w(tag, "onCall doesn't set") },
-    onRequestPermission: () -> Unit = { Log.w(tag, "onRequestPermission doesn't set") },
+    modifier                    : Modifier                  = Modifier,
+    restaurantId                : Int,
+    viewModel                   : RestaurantInfoViewModel   = hiltViewModel(),
+    tag                         : String                    = "__RestaurantInfo",
+    currentLatitude             : Double?                   = null,
+    currentLongitude            : Double?                   = null,
+    progressTintColor           : Color?                    = null,
+    isLocationPermissionGranted : Boolean                   = false,
+    onLocation                  : () -> Unit                = { Log.w(tag, "onLocation doesn't set") },
+    onWeb                       : (String) -> Unit          = { Log.w(tag, "onWeb doesn't set") },
+    onCall                      : (String) -> Unit          = { Log.w(tag, "onCall doesn't set") },
+    onRequestPermission         : () -> Unit                = { Log.w(tag, "onRequestPermission doesn't set") },
 ) {
     var restaurantInfoData : RestaurantInfoData = viewModel.uiState
-    LaunchedEffect(restaurantId) {
-        try {
-            viewModel.fetchRestaurantInfo1(restaurantId)
-        } catch (e: Exception) {
-            Log.e("__RestaurantInfo_", e.toString())
-        }
-    }
+    LaunchedEffect(restaurantId) { viewModel.fetchRestaurantInfo1(restaurantId) }
 
     LaunchedEffect(currentLongitude) {
         if (currentLatitude != null && currentLongitude != null) {
@@ -85,21 +79,22 @@ fun RestaurantInfo_(
 
 @Composable
 fun RestaurantInfo(
-    modifier: Modifier = Modifier,
-    tag: String = "__RestaurantInfo",
-    restaurantInfoData: RestaurantInfoData = RestaurantInfoData(),
-    onLocation: () -> Unit = { Log.w(tag, "onLocation doesn't set") },
-    onWeb: () -> Unit = { Log.w(tag, "onWeb doesn't set") },
-    onCall: () -> Unit = { Log.w(tag, "onCall doesn't set") },
-    onRequestPermission: () -> Unit = { Log.w(tag, "onRequestPermission doesn't set") },
-    progressTintColor: Color? = null,
-    isLocationPermissionGranted: Boolean = false,
+    modifier                    : Modifier              = Modifier,
+    tag                         : String                = "__RestaurantInfo",
+    restaurantInfoData          : RestaurantInfoData    = RestaurantInfoData(),
+    progressTintColor           : Color?                = null,
+    isLocationPermissionGranted : Boolean               = false,
+    onCall                      : () -> Unit            = { Log.w(tag, "onCall doesn't set") },
+    onWeb                       : () -> Unit            = { Log.w(tag, "onWeb doesn't set") },
+    onLocation                  : () -> Unit            = { Log.w(tag, "onLocation doesn't set") },
+    onRequestPermission         : () -> Unit            = { Log.w(tag, "onRequestPermission doesn't set") },
 ) {
     //@formatter:off
     Log.d(tag, "recomposition restaurantInfo: ${restaurantInfoData}")
     Column(modifier = modifier) {
         Box (modifier = Modifier.fillMaxWidth().height(300.dp)){ // 음식점명 + 평점 박스
-            LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), restaurantInfoData.imageUrl, null, null, ContentScale.Crop)
+            if(restaurantInfoData.imageUrl.isNotEmpty())
+                LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), restaurantInfoData.imageUrl, null, null, ContentScale.Crop)
             RestaurantTitleAndRating  (modifier = Modifier.align(Alignment.BottomEnd), restaurantName = restaurantInfoData.name, rating = restaurantInfoData.rating, reviewCount = restaurantInfoData.reviewCount, progressTintColor = progressTintColor)
         }
         Row { // 음식점 종류, 거리, 가격
