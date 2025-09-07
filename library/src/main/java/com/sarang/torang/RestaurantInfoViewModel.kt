@@ -2,6 +2,7 @@ package com.sarang.torang
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -14,35 +15,17 @@ class RestaurantInfoViewModel @Inject constructor(
 ) :
     ViewModel() {
     val tag = "__RestaurantInfoViewModel"
-    var uiState: RestaurantInfoData by mutableStateOf(RestaurantInfoData())
-        private set
+    var uiState: RestaurantInfoUiState by mutableStateOf(RestaurantInfoUiState.Loading); private set
+    val latitude : Double by mutableDoubleStateOf(0.0)
+    val longitude : Double by mutableDoubleStateOf(0.0)
 
     suspend fun fetchRestaurantInfo1(restaurantId: Int) {
-        try {
-            val result = getRestaurantInfoUseCase.invoke(restaurantId)
-            uiState = uiState.copy(
-                foodType = result.foodType,
-                open = result.open,
-                close = result.close,
-                address = result.address,
-                webSite = result.webSite,
-                tel = result.tel,
-                imageUrl = result.imageUrl,
-                name = result.name,
-                hoursOfOperation = result.hoursOfOperation,
-                rating = result.rating,
-                price = result.price,
-                reviewCount = result.reviewCount,
-                lat = result.lat,
-                lon = result.lon
-            )
-        }catch (e : Exception){
-            Log.e(tag, "$e")
-        }
+        try { uiState = RestaurantInfoUiState.Success(getRestaurantInfoUseCase.invoke(restaurantId)) }
+        catch (e : Exception){ Log.e(tag, "$e") }
     }
 
     fun setCurrentLocation(latitude: Double, longitude: Double) {
         Log.d(tag, "setCurrentLocation: ${latitude}, ${longitude}}")
-        uiState = uiState.copy(myLatitude = latitude, myLongitude = longitude)
+        //uiState = uiState.copy(myLatitude = latitude, myLongitude = longitude)
     }
 }
