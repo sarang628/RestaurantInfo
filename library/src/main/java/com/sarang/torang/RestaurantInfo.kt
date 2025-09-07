@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sarang.torang.restaurant.defaultShimmerBrush
 
 /**
  * ## 음식점 정보
@@ -55,7 +56,8 @@ fun RestaurantInfo_(
     onCall                      : (String) -> Unit          = { Log.w(tag, "onCall doesn't set") },
     onRequestPermission         : () -> Unit                = { Log.w(tag, "onRequestPermission doesn't set") },
 ) {
-    var restaurantInfoData : RestaurantInfoData = viewModel.uiState
+    var uiState : RestaurantInfoUiState = viewModel.uiState
+
     LaunchedEffect(restaurantId) { viewModel.fetchRestaurantInfo1(restaurantId) }
 
     LaunchedEffect(currentLongitude) {
@@ -64,17 +66,24 @@ fun RestaurantInfo_(
         }
     }
 
-    RestaurantInfo(
-        modifier,
-        restaurantInfoData = restaurantInfoData,
-        onLocation = onLocation,
-        onWeb = { onWeb.invoke(restaurantInfoData.webSite) },
-        onCall = { onCall.invoke(restaurantInfoData.tel) },
-        progressTintColor = progressTintColor,
-        onRequestPermission = onRequestPermission,
-        isLocationPermissionGranted = isLocationPermissionGranted
-    )
+    when(uiState){
+        RestaurantInfoUiState.Loading -> {
+            Shimmer()
+        }
+        is RestaurantInfoUiState.Success -> {
 
+            RestaurantInfo(
+                modifier,
+                restaurantInfoData = uiState.restaurantInfoData,
+                onLocation = onLocation,
+                onWeb = { onWeb.invoke(uiState.restaurantInfoData.webSite) },
+                onCall = { onCall.invoke(uiState.restaurantInfoData.tel) },
+                progressTintColor = progressTintColor,
+                onRequestPermission = onRequestPermission,
+                isLocationPermissionGranted = isLocationPermissionGranted
+            )
+        }
+    }
 }
 
 @Composable
@@ -137,8 +146,12 @@ fun RestaurantInfo(
 
 @Composable
 fun RestaurantTitleAndRating(modifier: Modifier = Modifier, restaurantName: String = "", rating: Float = 0f, reviewCount: Int = 0, progressTintColor: Color? = null, ) {
-    Box(modifier.padding(8.dp).clip(RoundedCornerShape(8.dp))) {
-        Column(Modifier.background(Color(0x55000000)).padding(8.dp), horizontalAlignment = Alignment.End) {
+    Box(modifier
+        .padding(8.dp)
+        .clip(RoundedCornerShape(8.dp))) {
+        Column(Modifier
+            .background(Color(0x55000000))
+            .padding(8.dp), horizontalAlignment = Alignment.End) {
             Text(text = restaurantName, maxLines = 1, fontSize = 25.sp, color = Color.White, fontWeight = FontWeight.Bold)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = rating.toString(), fontSize = 25.sp, color = Color.White, fontWeight = FontWeight.Bold)
@@ -202,5 +215,27 @@ val LocalRestaurantInfo = compositionLocalOf<RestaurantInfo> {
     // 기본 구현: 경고 로그 출력
     @Composable { _, _, _, _->
         Log.w("__LocalRestaurantInfo", "No LocalRestaurantInfo provided.")
+    }
+}
+
+@Preview
+@Composable
+fun Shimmer(){
+    Column {
+        Box(Modifier.height(300.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Spacer(Modifier.height(1.dp))
+        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Spacer(Modifier.height(1.dp))
+        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Spacer(Modifier.height(1.dp))
+        Box(Modifier.height(250.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Spacer(Modifier.height(1.dp))
+        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Spacer(Modifier.height(1.dp))
+        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Spacer(Modifier.height(1.dp))
+        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Spacer(Modifier.height(10.dp))
+        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
     }
 }
