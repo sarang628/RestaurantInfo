@@ -2,6 +2,11 @@ package com.sarang.torang
 
 import android.location.Location
 
+sealed interface RestaurantInfoUiState {
+    object Loading: RestaurantInfoUiState
+    data class Success(val restaurantInfoData: RestaurantInfoData) : RestaurantInfoUiState
+}
+
 data class RestaurantInfoData(
     val foodType: String = "",
     val open: String = "",
@@ -19,47 +24,7 @@ data class RestaurantInfoData(
     val lon: Double = 0.0,
     val myLatitude: Double? = null,
     val myLongitude: Double? = null
-) {
-    companion object {
-        fun dummy(): RestaurantInfoData = RestaurantInfoData(
-            foodType = "foodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodType",
-            open = "openopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopen",
-            close = "closeclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclose",
-            address = "addressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddress",
-            webSite = "webSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSite",
-            tel = "numbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumber",
-            name = "restaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurant",
-            imageUrl = "1/1/2023-09-11/10_37_55_147.jpeg",
-            hoursOfOperation = ArrayList(),
-            rating = 0.0f,
-            reviewCount = 10,
-            price = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        )
-
-        fun dummy1(): RestaurantInfoData = RestaurantInfoData(
-            foodType = "Korean",
-            open = "open",
-            close = "close",
-            address = "300 Olympic-ro, Songpa District, Seoul",
-            webSite = "google.com",
-            tel = "02-3213-5000",
-            name = "P.F. Chang's",
-            imageUrl = "http://sarang628.iptime.org:89/restaurant_images/209/2024-08-14/11_25_09_492.jpg",
-            hoursOfOperation = listOf(
-                HoursOfOperation("Mon", "10:00", "20:00"),
-                HoursOfOperation("Tue", "10:00", "20:00"),
-                HoursOfOperation("Wed", "10:00", "20:00"),
-                HoursOfOperation("Thu", "10:00", "20:00"),
-                HoursOfOperation("Fri", "10:00", "20:00"),
-                HoursOfOperation("Sat", "10:00", "20:00"),
-                HoursOfOperation("Sun", "10:00", "20:00"),
-            ),
-            rating = 4.0f,
-            reviewCount = 10,
-            price = "$$"
-        )
-    }
-}
+) { companion object }
 
 val RestaurantInfoData.distanceM: Int? get() = calculateDistance(lat, lon, myLatitude, myLongitude)?.toInt()
 val RestaurantInfoData.distanceKm: Int? get() = calculateDistance(lat, lon, myLatitude, myLongitude)?.div(1000)?.toInt()
@@ -93,7 +58,6 @@ fun RestaurantInfoData.toDayOfOperation(): String {
     }
     return str
 }
-
 fun RestaurantInfoData.toHoursOfOperation(): String {
     var str = ""
     this.hoursOfOperation.let {
@@ -105,3 +69,39 @@ fun RestaurantInfoData.toHoursOfOperation(): String {
     }
     return str
 }
+val RestaurantInfoData.Companion.dummy get() = RestaurantInfoData(
+    foodType = "foodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodTypefoodType",
+    open = "openopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopenopen",
+    close = "closeclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclosecloseclose",
+    address = "addressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddressaddress",
+    webSite = "webSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSitewebSite",
+    tel = "numbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumbernumber",
+    name = "restaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurantrestaurant",
+    imageUrl = "1/1/2023-09-11/10_37_55_147.jpeg",
+    hoursOfOperation = ArrayList(),
+    rating = 0.0f,
+    reviewCount = 10,
+    price = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+)
+val RestaurantInfoData.dummy1 get() = RestaurantInfoData(
+    foodType = "Korean",
+    open = "open",
+    close = "close",
+    address = "300 Olympic-ro, Songpa District, Seoul",
+    webSite = "google.com",
+    tel = "02-3213-5000",
+    name = "P.F. Chang's",
+    imageUrl = "http://sarang628.iptime.org:89/restaurant_images/209/2024-08-14/11_25_09_492.jpg",
+    hoursOfOperation = listOf(
+        HoursOfOperation("Mon", "10:00", "20:00"),
+        HoursOfOperation("Tue", "10:00", "20:00"),
+        HoursOfOperation("Wed", "10:00", "20:00"),
+        HoursOfOperation("Thu", "10:00", "20:00"),
+        HoursOfOperation("Fri", "10:00", "20:00"),
+        HoursOfOperation("Sat", "10:00", "20:00"),
+        HoursOfOperation("Sun", "10:00", "20:00"),
+    ),
+    rating = 4.0f,
+    reviewCount = 10,
+    price = "$$"
+)
