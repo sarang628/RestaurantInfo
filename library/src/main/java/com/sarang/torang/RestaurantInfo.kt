@@ -1,7 +1,5 @@
 package com.sarang.torang
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,13 +28,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sarang.torang.restaurant.defaultShimmerBrush
 
@@ -51,8 +47,7 @@ fun RestaurantInfoScreen(
     restaurantId                : Int,
     viewModel                   : RestaurantInfoViewModel   = hiltViewModel(),
     tag                         : String                    = "__RestaurantInfo",
-    currentLatitude             : Double?                   = null,
-    currentLongitude            : Double?                   = null,
+    currentLocation             : Pair<Double,Double>?      = null,
     progressTintColor           : Color?                    = null,
     isLocationPermissionGranted : Boolean                   = false,
     onLocation                  : () -> Unit                = { Log.w(tag, "onLocation doesn't set") },
@@ -60,90 +55,85 @@ fun RestaurantInfoScreen(
     onCall                      : (String) -> Unit          = { Log.w(tag, "onCall doesn't set") },
     onRequestPermission         : () -> Unit                = { Log.w(tag, "onRequestPermission doesn't set") },
 ) {
-    var uiState : RestaurantInfoUiState = viewModel.uiState
-
     LaunchedEffect(restaurantId) { viewModel.fetchRestaurantInfo1(restaurantId) }
 
-    LaunchedEffect(currentLongitude) {
-        if (currentLatitude != null && currentLongitude != null) {
-            viewModel.setCurrentLocation(currentLatitude, currentLongitude)
-        }
+    LaunchedEffect(currentLocation) {
+        currentLocation?.let { viewModel.setCurrentLocation(it.first, it.second) }
     }
 
-    when(uiState){
-        RestaurantInfoUiState.Loading -> {
-            Shimmer()
-        }
-        is RestaurantInfoUiState.Success -> {
-
-            RestaurantInfo(
-                modifier,
-                restaurantInfoData = uiState.restaurantInfoData,
-                onLocation = onLocation,
-                onWeb = { onWeb.invoke(uiState.restaurantInfoData.webSite) },
-                onCall = { onCall.invoke(uiState.restaurantInfoData.tel) },
-                progressTintColor = progressTintColor,
-                onRequestPermission = onRequestPermission,
-                isLocationPermissionGranted = isLocationPermissionGranted
-            )
-        }
-    }
+    RestaurantInfo(
+        modifier = modifier,
+        uiState = viewModel.uiState,
+        onLocation = onLocation,
+        onWeb = onWeb,
+        onCall = onCall,
+        progressTintColor = progressTintColor,
+        onRequestPermission = onRequestPermission,
+        isLocationPermissionGranted = isLocationPermissionGranted
+    )
 }
 
 @Composable
 fun RestaurantInfo(
     modifier                    : Modifier              = Modifier,
     tag                         : String                = "__RestaurantInfo",
-    restaurantInfoData          : RestaurantInfoData    = RestaurantInfoData(),
+    uiState                     : RestaurantInfoUiState = RestaurantInfoUiState.Loading,
     progressTintColor           : Color?                = null,
     isLocationPermissionGranted : Boolean               = false,
-    onCall                      : () -> Unit            = { Log.w(tag, "onCall doesn't set") },
-    onWeb                       : () -> Unit            = { Log.w(tag, "onWeb doesn't set") },
+    onCall                      : (String) -> Unit      = { Log.w(tag, "onCall doesn't set") },
+    onWeb                       : (String) -> Unit      = { Log.w(tag, "onWeb doesn't set") },
     onLocation                  : () -> Unit            = { Log.w(tag, "onLocation doesn't set") },
     onRequestPermission         : () -> Unit            = { Log.w(tag, "onRequestPermission doesn't set") },
 ) {
     //@formatter:off
-    Log.d(tag, "recomposition restaurantInfo: ${restaurantInfoData}")
-    Column(modifier = modifier) {
-        Box (modifier = Modifier.fillMaxWidth().height(300.dp)){ // 음식점명 + 평점 박스
-            if(restaurantInfoData.imageUrl.isNotEmpty())
-                LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), restaurantInfoData.imageUrl, null, null, ContentScale.Crop)
-            RestaurantTitleAndRating  (modifier = Modifier.align(Alignment.BottomEnd), restaurantName = restaurantInfoData.name, rating = restaurantInfoData.rating, reviewCount = restaurantInfoData.reviewCount, progressTintColor = progressTintColor)
+    when(uiState){
+        RestaurantInfoUiState.Loading -> {
+            Shimmer()
         }
-        Row { // 음식점 종류, 거리, 가격
-            IconButton({}){ Icon  (modifier = Modifier.size(50.dp).padding(10.dp), painter = painterResource(id = R.drawable.ic_info), contentDescription = "") }
-            Text  (modifier = Modifier.align(Alignment.CenterVertically).clickable(onClick = onRequestPermission),
-                text = "${restaurantInfoData.foodType} • ${if(isLocationPermissionGranted)restaurantInfoData.distance else "(위치 권한 필요.)"} • ${restaurantInfoData.price}")
-        }
-        HorizontalDivider()
-        Row { // 주소
-            IconButton (onClick = onLocation) { Icon(painter = painterResource(id = R.drawable.ic_loc), contentDescription = "", modifier = Modifier.size(21.dp)) }
-            Text (modifier = Modifier.align(Alignment.CenterVertically).padding(top = 5.dp, bottom = 5.dp).clickable { onLocation.invoke() }, text = restaurantInfoData.address)
-        }
-        HorizontalDivider()
-        Row { // 웹사이트
-            IconButton(onClick = onWeb) { Icon(painter = painterResource(id = R.drawable.ic_web), contentDescription = "", modifier = Modifier.size(21.dp)) }
-            Text(modifier = Modifier.align(Alignment.CenterVertically).clickable { onWeb.invoke() }, text = restaurantInfoData.webSite)
-        }
-        HorizontalDivider()
-        Row { // 운영시간
-            IconButton({}) {
-                Icon (painter = painterResource(id = R.drawable.ic_time), contentDescription = "")
+        is RestaurantInfoUiState.Success -> {
+            uiState.restaurantInfoData.let {
+                Column(modifier = modifier) {
+                    Box (modifier = Modifier.fillMaxWidth().height(300.dp)){ // 음식점명 + 평점 박스
+                        if(it.imageUrl.isNotEmpty())
+                            LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), it.imageUrl, null, null, ContentScale.Crop)
+                        RestaurantTitleAndRating  (modifier = Modifier.align(Alignment.BottomEnd), restaurantName = it.name, rating = it.rating, reviewCount = it.reviewCount, progressTintColor = progressTintColor)
+                    }
+                    Row { // 음식점 종류, 거리, 가격
+                        IconButton({}){ Icon  (modifier = Modifier.size(50.dp).padding(10.dp), painter = painterResource(id = R.drawable.ic_info), contentDescription = "") }
+                        Text  (modifier = Modifier.align(Alignment.CenterVertically).clickable(onClick = onRequestPermission),
+                            text = "${it.foodType} • ${if(isLocationPermissionGranted) it.distance else "(위치 권한 필요.)"} • ${it.price}")
+                    }
+                    HorizontalDivider()
+                    Row { // 주소
+                        IconButton (onClick = onLocation) { Icon(painter = painterResource(id = R.drawable.ic_loc), contentDescription = "", modifier = Modifier.size(21.dp)) }
+                        Text (modifier = Modifier.align(Alignment.CenterVertically).padding(top = 5.dp, bottom = 5.dp).clickable { onLocation.invoke() }, text = it.address)
+                    }
+                    HorizontalDivider()
+                    Row { // 웹사이트
+                        IconButton(onClick = { onWeb.invoke(it.webSite) }) { Icon(painter = painterResource(id = R.drawable.ic_web), contentDescription = "", modifier = Modifier.size(21.dp)) }
+                        Text(modifier = Modifier.align(Alignment.CenterVertically).clickable { onWeb.invoke(it.webSite) }, text = it.webSite)
+                    }
+                    HorizontalDivider()
+                    Row { // 운영시간
+                        IconButton({}) {
+                            Icon (painter = painterResource(id = R.drawable.ic_time), contentDescription = "")
+                        }
+                        Row(Modifier.align(Alignment.CenterVertically)) {
+                            Text (modifier = Modifier.padding(vertical = 8.dp), text = it.toDayOfOperation())
+                            Spacer(Modifier.width(8.dp))
+                            Text (modifier = Modifier.padding(vertical = 8.dp), text = it.toHoursOfOperation())
+                        }
+                    }
+                    HorizontalDivider()
+                    Row { // 전화번호
+                        IconButton (onClick = { onCall.invoke(it.tel) }) { Icon(modifier = Modifier.size(21.dp), painter = painterResource(id = R.drawable.ic_phone), contentDescription = "") }
+                        Text (modifier = Modifier.align(Alignment.CenterVertically).padding(top = 8.dp, bottom = 8.dp, end = 8.dp).clickable { onCall.invoke(it.tel) }, text = it.tel)
+                    }
+                    HorizontalDivider()
+                    //@formatter:on
+                }
             }
-            //Text (modifier = Modifier.padding(vertical = 8.dp), text = restaurantInfoData.operationTime)
-            Row(Modifier.align(Alignment.CenterVertically)) {
-                Text (modifier = Modifier.padding(vertical = 8.dp), text = restaurantInfoData.toDayOfOperation())
-                Spacer(Modifier.width(8.dp))
-                Text (modifier = Modifier.padding(vertical = 8.dp), text = restaurantInfoData.toHoursOfOperation())
-            }
         }
-        HorizontalDivider()
-        Row { // 전화번호
-            IconButton (onClick = onCall) { Icon(modifier = Modifier.size(21.dp), painter = painterResource(id = R.drawable.ic_phone), contentDescription = "") }
-            Text (modifier = Modifier.align(Alignment.CenterVertically).padding(top = 8.dp, bottom = 8.dp, end = 8.dp).clickable { onCall.invoke() }, text = restaurantInfoData.tel)
-        }
-        HorizontalDivider()
-    //@formatter:on
     }
 }
 
@@ -206,7 +196,6 @@ fun PreviewRestaurantInfo1() {
     )
     RestaurantInfo(
         modifier = Modifier.verticalScroll(rememberScrollState()),
-        restaurantInfoData = restaurantInfoData
     )
 }
 
