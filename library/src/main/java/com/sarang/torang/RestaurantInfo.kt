@@ -42,7 +42,7 @@ import com.sarang.torang.restaurant.defaultShimmerBrush
  * - 권한과 위치 요청에 관한 기능은 제공하지 않음.
  */
 @Composable
-fun RestaurantInfo_(
+fun RestaurantInfoScreen(
     modifier                    : Modifier                  = Modifier,
     restaurantId                : Int,
     viewModel                   : RestaurantInfoViewModel   = hiltViewModel(),
