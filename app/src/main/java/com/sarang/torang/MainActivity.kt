@@ -9,7 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import com.sarang.torang.di.image3.customImageLoader
-import com.sarang.torang.di.restaurant_info.restaurantInfo
+import com.sarang.torang.di.restauarnt_info_di.restaurantInfo
 import com.sryang.torang.ui.TorangTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TorangTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    CompositionLocalProvider(LocalRestaurantInfoImageLoader provides customImageLoader, LocalRestaurantInfo provides restaurantInfo)
+                    CompositionLocalProvider(LocalRestaurantInfoImageLoader provides customImageLoader, LocalRestaurantInfo provides restaurantInfo())
                     {
                         //RestaurantInfo_(restaurantId = 234)
                         //RestaurantInfoWithPermissionWithLocation(234)
