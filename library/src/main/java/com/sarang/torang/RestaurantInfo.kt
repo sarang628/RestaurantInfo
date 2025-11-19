@@ -199,14 +199,18 @@ fun PreviewRestaurantInfo1() {
     )
 }
 
-typealias RestaurantInfo = @Composable (restaurantId : Int,
-                                        onLocation: () -> Unit,
-                                        onWeb: (String) -> Unit,
-                                        onCall: (String) -> Unit) -> Unit
+typealias RestaurantInfo = @Composable (RestaurantInfoScreenData) -> Unit
+
+data class RestaurantInfoScreenData(
+    val restaurantId    : Int,
+    val onLocation      : () -> Unit,
+    val onWeb           : (String) -> Unit,
+    val onCall          : (String) -> Unit
+)
 
 val LocalRestaurantInfo = compositionLocalOf<RestaurantInfo> {
     // 기본 구현: 경고 로그 출력
-    @Composable { _, _, _, _->
+    @Composable {
         Log.w("__LocalRestaurantInfo", "No LocalRestaurantInfo provided.")
     }
 }

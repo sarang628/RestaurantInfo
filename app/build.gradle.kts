@@ -46,7 +46,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.6"
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtension.get()
     }
 
     compileOptions {
@@ -109,4 +109,6 @@ dependencies {
     implementation(libs.composePermissionTest)
     implementation(libs.play.services.location)
     implementation(libs.kotlin.coroutines.play)
+
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }

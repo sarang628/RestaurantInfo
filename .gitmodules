@@ -16,3 +16,9 @@
 [submodule "app/src/main/java/com/sarang/torang/di/torang_database_di"]
 	path = app/src/main/java/com/sarang/torang/di/torang_database_di
 	url = https://github.com/sarang628/torang_database_di.git
+[submodule "app/src/main/java/com/sarang/torang/di/app/src/main/java/com/sarang/torang/di/image"]
+	path = app/src/main/java/com/sarang/torang/di/app/src/main/java/com/sarang/torang/di/image
+	url = https://github.com/sarang628/image.git
+[submodule "app/src/main/java/com/sarang/torang/di/image"]
+	path = app/src/main/java/com/sarang/torang/di/image
+	url = https://github.com/sarang628/image.git
