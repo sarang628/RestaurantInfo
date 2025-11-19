@@ -97,9 +97,7 @@ class MainActivity : ComponentActivity() {
                                 LocalRestaurantInfo.current.invoke(
                                     RestaurantInfoScreenData(
                                         restaurantId = restaurantId,
-                                        onLocation = {},
-                                        onWeb = {},
-                                        onCall = {}
+                                        onLocation = {}
                                     )
                                 )
                             }

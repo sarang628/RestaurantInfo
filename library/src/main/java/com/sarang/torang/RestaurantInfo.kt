@@ -1,5 +1,8 @@
 package com.sarang.torang
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sarang.torang.restaurant.defaultShimmerBrush
+import androidx.core.net.toUri
 
 /**
  * ## 음식점 정보
@@ -51,10 +56,9 @@ fun RestaurantInfoScreen(
     progressTintColor           : Color?                    = null,
     isLocationPermissionGranted : Boolean                   = false,
     onLocation                  : () -> Unit                = { Log.w(tag, "onLocation doesn't set") },
-    onWeb                       : (String) -> Unit          = { Log.w(tag, "onWeb doesn't set") },
-    onCall                      : (String) -> Unit          = { Log.w(tag, "onCall doesn't set") },
     onRequestPermission         : () -> Unit                = { Log.w(tag, "onRequestPermission doesn't set") },
 ) {
+    val context = LocalContext.current
     LaunchedEffect(restaurantId) { viewModel.fetchRestaurantInfo1(restaurantId) }
 
     LaunchedEffect(currentLocation) {
@@ -65,8 +69,6 @@ fun RestaurantInfoScreen(
         modifier = modifier,
         uiState = viewModel.uiState,
         onLocation = onLocation,
-        onWeb = onWeb,
-        onCall = onCall,
         progressTintColor = progressTintColor,
         onRequestPermission = onRequestPermission,
         isLocationPermissionGranted = isLocationPermissionGranted
@@ -80,11 +82,10 @@ fun RestaurantInfo(
     uiState                     : RestaurantInfoUiState = RestaurantInfoUiState.Loading,
     progressTintColor           : Color?                = null,
     isLocationPermissionGranted : Boolean               = false,
-    onCall                      : (String) -> Unit      = { Log.w(tag, "onCall doesn't set") },
-    onWeb                       : (String) -> Unit      = { Log.w(tag, "onWeb doesn't set") },
     onLocation                  : () -> Unit            = { Log.w(tag, "onLocation doesn't set") },
     onRequestPermission         : () -> Unit            = { Log.w(tag, "onRequestPermission doesn't set") },
 ) {
+    val context = LocalContext.current
     //@formatter:off
     when(uiState){
         RestaurantInfoUiState.Loading -> {
@@ -110,8 +111,27 @@ fun RestaurantInfo(
                     }
                     HorizontalDivider()
                     Row { // 웹사이트
-                        IconButton(onClick = { onWeb.invoke(it.webSite) }) { Icon(painter = painterResource(id = R.drawable.ic_web), contentDescription = "", modifier = Modifier.size(21.dp)) }
-                        Text(modifier = Modifier.align(Alignment.CenterVertically).clickable { onWeb.invoke(it.webSite) }, text = it.webSite)
+                        IconButton(
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW, it.webSite.toUri())
+                                context.startActivity(intent)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_web),
+                                contentDescription = null,
+                                modifier = Modifier.size(21.dp)
+                            )
+                        }
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .clickable {
+                                    val intent = Intent(Intent.ACTION_VIEW, it.webSite.toUri())
+                                    context.startActivity(intent)
+                                           },
+                            text = it.webSite
+                        )
                     }
                     HorizontalDivider()
                     Row { // 운영시간
@@ -126,8 +146,18 @@ fun RestaurantInfo(
                     }
                     HorizontalDivider()
                     Row { // 전화번호
-                        IconButton (onClick = { onCall.invoke(it.tel) }) { Icon(modifier = Modifier.size(21.dp), painter = painterResource(id = R.drawable.ic_phone), contentDescription = "") }
-                        Text (modifier = Modifier.align(Alignment.CenterVertically).padding(top = 8.dp, bottom = 8.dp, end = 8.dp).clickable { onCall.invoke(it.tel) }, text = it.tel)
+                        IconButton (onClick = {
+                            val intent = Intent(Intent.ACTION_DIAL).apply {
+                                data = "tel:${it.tel}".toUri()
+                            }
+                            context.startActivity(intent)
+                        }) { Icon(modifier = Modifier.size(21.dp), painter = painterResource(id = R.drawable.ic_phone), contentDescription = "") }
+                        Text (modifier = Modifier.align(Alignment.CenterVertically).padding(top = 8.dp, bottom = 8.dp, end = 8.dp).clickable {
+                            val intent = Intent(Intent.ACTION_DIAL).apply {
+                                data = "tel:${it.tel}".toUri()
+                            }
+                            context.startActivity(intent)
+                        }, text = it.tel)
                     }
                     HorizontalDivider()
                     //@formatter:on
@@ -139,7 +169,13 @@ fun RestaurantInfo(
 
 
 @Composable
-fun RestaurantTitleAndRating(modifier: Modifier = Modifier, restaurantName: String = "", rating: Float = 0f, reviewCount: Int = 0, progressTintColor: Color? = null, ) {
+fun RestaurantTitleAndRating(
+    modifier: Modifier = Modifier,
+    restaurantName: String = "",
+    rating: Float = 0f,
+    reviewCount: Int = 0,
+    progressTintColor: Color? = null
+) {
     Box(modifier
         .padding(8.dp)
         .clip(RoundedCornerShape(8.dp))) {
@@ -194,7 +230,7 @@ fun PreviewRestaurantInfo1() {
         imageUrl = "",
 //        name = "맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드맥도날드"
     )
-    RestaurantInfo(
+    RestaurantInfo(/*Preview*/
         modifier = Modifier.verticalScroll(rememberScrollState()),
     )
 }
@@ -203,9 +239,7 @@ typealias RestaurantInfo = @Composable (RestaurantInfoScreenData) -> Unit
 
 data class RestaurantInfoScreenData(
     val restaurantId    : Int,
-    val onLocation      : () -> Unit,
-    val onWeb           : (String) -> Unit,
-    val onCall          : (String) -> Unit
+    val onLocation      : () -> Unit
 )
 
 val LocalRestaurantInfo = compositionLocalOf<RestaurantInfo> {
@@ -219,20 +253,44 @@ val LocalRestaurantInfo = compositionLocalOf<RestaurantInfo> {
 @Composable
 fun Shimmer(){
     Column {
-        Box(Modifier.height(300.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Box(Modifier
+            .height(300.dp)
+            .fillMaxWidth()
+            .background(defaultShimmerBrush()))
         Spacer(Modifier.height(1.dp))
-        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Box(Modifier
+            .height(60.dp)
+            .fillMaxWidth()
+            .background(defaultShimmerBrush()))
         Spacer(Modifier.height(1.dp))
-        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Box(Modifier
+            .height(60.dp)
+            .fillMaxWidth()
+            .background(defaultShimmerBrush()))
         Spacer(Modifier.height(1.dp))
-        Box(Modifier.height(250.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Box(Modifier
+            .height(250.dp)
+            .fillMaxWidth()
+            .background(defaultShimmerBrush()))
         Spacer(Modifier.height(1.dp))
-        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Box(Modifier
+            .height(60.dp)
+            .fillMaxWidth()
+            .background(defaultShimmerBrush()))
         Spacer(Modifier.height(1.dp))
-        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Box(Modifier
+            .height(60.dp)
+            .fillMaxWidth()
+            .background(defaultShimmerBrush()))
         Spacer(Modifier.height(1.dp))
-        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Box(Modifier
+            .height(60.dp)
+            .fillMaxWidth()
+            .background(defaultShimmerBrush()))
         Spacer(Modifier.height(10.dp))
-        Box(Modifier.height(60.dp).fillMaxWidth().background(defaultShimmerBrush()))
+        Box(Modifier
+            .height(60.dp)
+            .fillMaxWidth()
+            .background(defaultShimmerBrush()))
     }
 }
