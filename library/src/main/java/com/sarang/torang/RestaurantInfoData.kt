@@ -47,6 +47,10 @@ fun RestaurantInfoData.toHoursOperation(): String {
     }
     return str
 }
+
+fun RestaurantInfoData.isEmptyOperation() : Boolean{
+    return this.hoursOfOperation.isEmpty()
+}
 fun RestaurantInfoData.toDayOfOperation(): String {
     var str = ""
     this.hoursOfOperation.let {

@@ -133,15 +133,18 @@ fun RestaurantInfo(
                             text = it.webSite
                         )
                     }
-                    HorizontalDivider()
-                    Row { // 운영시간
-                        IconButton({}) {
-                            Icon (painter = painterResource(id = R.drawable.ic_time), contentDescription = "")
-                        }
-                        Row(Modifier.align(Alignment.CenterVertically)) {
-                            Text (modifier = Modifier.padding(vertical = 8.dp), text = it.toDayOfOperation())
-                            Spacer(Modifier.width(8.dp))
-                            Text (modifier = Modifier.padding(vertical = 8.dp), text = it.toHoursOfOperation())
+                    if(!it.isEmptyOperation())
+                    {
+                        HorizontalDivider()
+                        Row { // 운영시간
+                            IconButton({}) {
+                                Icon (painter = painterResource(id = R.drawable.ic_time), contentDescription = "")
+                            }
+                            Row(Modifier.align(Alignment.CenterVertically)) {
+                                Text (modifier = Modifier.padding(vertical = 8.dp), text = it.toDayOfOperation())
+                                Spacer(Modifier.width(8.dp))
+                                Text (modifier = Modifier.padding(vertical = 8.dp), text = it.toHoursOfOperation())
+                            }
                         }
                     }
                     HorizontalDivider()
