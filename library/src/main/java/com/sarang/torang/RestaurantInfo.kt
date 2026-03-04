@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -98,23 +99,25 @@ fun RestaurantInfo(
                                            rating               = it.rating,
                                            reviewCount          = it.reviewCount,
                                            progressTintColor    = progressTintColor)
-                    Food(isLocationPermissionGranted    = isLocationPermissionGranted,
-                        distance                        = it.distance,
-                        foodType                        = it.foodType,
-                        price                           = it.price,
-                        onRequestPermission             = onRequestPermission)
-                    HorizontalDivider()
-                    Address(address = it.address, onLocation = onLocation)
-                    HorizontalDivider()
-                    WebSite(it.webSite, onWebSite = { goWebSite(context, it.webSite) })
-                    if(!it.isEmptyOperation())
-                    {
-                        OperationTime(dayOfOperation = it.toDayOfOperation(),
-                                      hoursOfOperation = it.toHoursOfOperation())
+                    Column(modifier = Modifier.padding(horizontal = 8.dp)) {
+                        Food(isLocationPermissionGranted    = isLocationPermissionGranted,
+                            distance                        = it.distance,
+                            foodType                        = it.foodType,
+                            price                           = it.price,
+                            onRequestPermission             = onRequestPermission)
+                        HorizontalDivider()
+                        Address(address = it.address, onLocation = onLocation)
+                        HorizontalDivider()
+                        WebSite(it.webSite, onWebSite = { goWebSite(context, it.webSite) })
+                        if(!it.isEmptyOperation())
+                        {
+                            OperationTime(dayOfOperation = it.toDayOfOperation(),
+                                hoursOfOperation = it.toHoursOfOperation())
+                        }
+                        HorizontalDivider()
+                        Phone(tel = it.tel, onPhone = { call(context, it.tel)})
+                        HorizontalDivider()
                     }
-                    HorizontalDivider()
-                    Phone(tel = it.tel, onPhone = { call(context, it.tel)})
-                    HorizontalDivider()
                     //@formatter:on
                 }
             }
@@ -131,6 +134,9 @@ fun RestaurantPhotoAndLogo(imageUrl : String = "",
     Box (modifier = Modifier.fillMaxWidth().height(300.dp)){ // 음식점명 + 평점 박스
         if(imageUrl.isNotEmpty())
             LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), imageUrl, null, null, ContentScale.Crop)
+
+        PreviewRestaurantPhotoRow()
+
         RestaurantTitleAndRating  (modifier = Modifier.align(Alignment.BottomEnd),
                                    restaurantName = name,
                                    rating = rating,
@@ -152,7 +158,9 @@ fun call(context : Context, tel : String){
 
 @Composable
 fun Address(address : String = "", onLocation: () -> Unit){
-    Row { // 주소
+    Row(Modifier.fillMaxWidth()
+        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+        .background(color = MaterialTheme.colorScheme.tertiary)) { // 주소
         IconButton (onClick = onLocation) {
             Icon(painter = painterResource(id = R.drawable.ic_loc),
                  contentDescription = "",
@@ -169,7 +177,9 @@ fun Address(address : String = "", onLocation: () -> Unit){
 fun OperationTime(dayOfOperation : String = "",
     hoursOfOperation : String = "", ){
     HorizontalDivider()
-    Row { // 운영시간
+    Row(Modifier.fillMaxWidth()
+        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+        .background(color = MaterialTheme.colorScheme.tertiary)) { // 운영시간
         IconButton({}) {
             Icon (painter = painterResource(id = R.drawable.ic_time), contentDescription = "")
         }
@@ -186,8 +196,14 @@ private fun Food(isLocationPermissionGranted : Boolean = false,
                  distance : String = "",
                  foodType : String,
                  price : String,
-                 onRequestPermission : ()->Unit = {}){
-    Row { // 음식점 종류, 거리, 가격
+                 onRequestPermission : ()->Unit = {},
+                 isStart : Boolean = false
+){
+    Row(Modifier.fillMaxWidth()
+                .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                .background(color = MaterialTheme.colorScheme.tertiary)
+
+    ) { // 음식점 종류, 거리, 가격
         IconButton({}){ Icon  (modifier = Modifier.size(50.dp).padding(10.dp), painter = painterResource(id = R.drawable.ic_info), contentDescription = "") }
         Text  (modifier = Modifier.align(Alignment.CenterVertically).clickable(onClick = onRequestPermission),
             text = "${foodType} • ${if(isLocationPermissionGranted) distance else "(위치 권한 필요.)"} • $price")
@@ -196,7 +212,9 @@ private fun Food(isLocationPermissionGranted : Boolean = false,
 
 @Composable
 fun Phone(tel : String = "", onPhone : () -> Unit = {}){
-    Row { // 전화번호
+    Row(Modifier.fillMaxWidth()
+        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+        .background(color = MaterialTheme.colorScheme.tertiary)) { // 전화번호
     IconButton (onPhone) { Icon(modifier = Modifier.size(21.dp), painter = painterResource(id = R.drawable.ic_phone), contentDescription = "") }
     Text (modifier = Modifier.align(Alignment.CenterVertically)
                              .padding(top = 8.dp, bottom = 8.dp, end = 8.dp)
@@ -208,7 +226,9 @@ fun Phone(tel : String = "", onPhone : () -> Unit = {}){
 @Composable
 private fun WebSite(webSite : String,
                     onWebSite : ()->Unit ={}){
-    Row { // 웹사이트
+    Row(Modifier.fillMaxWidth()
+        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+        .background(color = MaterialTheme.colorScheme.tertiary)) { // 웹사이트
         IconButton(onClick = onWebSite) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_web),
