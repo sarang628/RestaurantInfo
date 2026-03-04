@@ -1,5 +1,6 @@
 package com.sarang.torang
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.background
@@ -92,79 +93,135 @@ fun RestaurantInfo(
         is RestaurantInfoUiState.Success -> {
             uiState.restaurantInfoData.let {
                 Column(modifier = modifier) {
-                    Box (modifier = Modifier.fillMaxWidth().height(300.dp)){ // 음식점명 + 평점 박스
-                        if(it.imageUrl.isNotEmpty())
-                            LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), it.imageUrl, null, null, ContentScale.Crop)
-                        RestaurantTitleAndRating  (modifier = Modifier.align(Alignment.BottomEnd), restaurantName = it.name, rating = it.rating, reviewCount = it.reviewCount, progressTintColor = progressTintColor)
-                    }
-                    Row { // 음식점 종류, 거리, 가격
-                        IconButton({}){ Icon  (modifier = Modifier.size(50.dp).padding(10.dp), painter = painterResource(id = R.drawable.ic_info), contentDescription = "") }
-                        Text  (modifier = Modifier.align(Alignment.CenterVertically).clickable(onClick = onRequestPermission),
-                            text = "${it.foodType} • ${if(isLocationPermissionGranted) it.distance else "(위치 권한 필요.)"} • ${it.price}")
-                    }
+                    RestaurantPhotoAndLogo(imageUrl             = it.imageUrl,
+                                           name                 = it.name,
+                                           rating               = it.rating,
+                                           reviewCount          = it.reviewCount,
+                                           progressTintColor    = progressTintColor)
+                    Food(isLocationPermissionGranted    = isLocationPermissionGranted,
+                        distance                        = it.distance,
+                        foodType                        = it.foodType,
+                        price                           = it.price,
+                        onRequestPermission             = onRequestPermission)
                     HorizontalDivider()
-                    Row { // 주소
-                        IconButton (onClick = onLocation) { Icon(painter = painterResource(id = R.drawable.ic_loc), contentDescription = "", modifier = Modifier.size(21.dp)) }
-                        Text (modifier = Modifier.align(Alignment.CenterVertically).padding(top = 5.dp, bottom = 5.dp).clickable { onLocation.invoke() }, text = it.address)
-                    }
+                    Address(address = it.address, onLocation = onLocation)
                     HorizontalDivider()
-                    Row { // 웹사이트
-                        IconButton(
-                            onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, it.webSite.toUri())
-                                context.startActivity(intent)
-                            }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_web),
-                                contentDescription = null,
-                                modifier = Modifier.size(21.dp)
-                            )
-                        }
-                        Text(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .clickable {
-                                    val intent = Intent(Intent.ACTION_VIEW, it.webSite.toUri())
-                                    context.startActivity(intent)
-                                           },
-                            text = it.webSite
-                        )
-                    }
+                    WebSite(it.webSite, onWebSite = { goWebSite(context, it.webSite) })
                     if(!it.isEmptyOperation())
                     {
-                        HorizontalDivider()
-                        Row { // 운영시간
-                            IconButton({}) {
-                                Icon (painter = painterResource(id = R.drawable.ic_time), contentDescription = "")
-                            }
-                            Row(Modifier.align(Alignment.CenterVertically)) {
-                                Text (modifier = Modifier.padding(vertical = 8.dp), text = it.toDayOfOperation())
-                                Spacer(Modifier.width(8.dp))
-                                Text (modifier = Modifier.padding(vertical = 8.dp), text = it.toHoursOfOperation())
-                            }
-                        }
+                        OperationTime(dayOfOperation = it.toDayOfOperation(),
+                                      hoursOfOperation = it.toHoursOfOperation())
                     }
                     HorizontalDivider()
-                    Row { // 전화번호
-                        IconButton (onClick = {
-                            val intent = Intent(Intent.ACTION_DIAL).apply {
-                                data = "tel:${it.tel}".toUri()
-                            }
-                            context.startActivity(intent)
-                        }) { Icon(modifier = Modifier.size(21.dp), painter = painterResource(id = R.drawable.ic_phone), contentDescription = "") }
-                        Text (modifier = Modifier.align(Alignment.CenterVertically).padding(top = 8.dp, bottom = 8.dp, end = 8.dp).clickable {
-                            val intent = Intent(Intent.ACTION_DIAL).apply {
-                                data = "tel:${it.tel}".toUri()
-                            }
-                            context.startActivity(intent)
-                        }, text = it.tel)
-                    }
+                    Phone(tel = it.tel, onPhone = { call(context, it.tel)})
                     HorizontalDivider()
                     //@formatter:on
                 }
             }
         }
+    }
+}
+
+@Composable
+fun RestaurantPhotoAndLogo(imageUrl : String = "",
+                           name : String = "",
+                           rating: Float = 0f,
+                           reviewCount: Int = 0,
+                           progressTintColor: Color? = null){
+    Box (modifier = Modifier.fillMaxWidth().height(300.dp)){ // 음식점명 + 평점 박스
+        if(imageUrl.isNotEmpty())
+            LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), imageUrl, null, null, ContentScale.Crop)
+        RestaurantTitleAndRating  (modifier = Modifier.align(Alignment.BottomEnd),
+                                   restaurantName = name,
+                                   rating = rating,
+                                   reviewCount = reviewCount,
+                                   progressTintColor = progressTintColor)
+    }
+}
+fun goWebSite(context : Context, webSite : String){
+    val intent = Intent(Intent.ACTION_VIEW, webSite.toUri())
+    context.startActivity(intent)
+}
+
+fun call(context : Context, tel : String){
+    val intent = Intent(Intent.ACTION_DIAL).apply {
+        data = "tel:${tel}".toUri()
+    }
+    context.startActivity(intent)
+}
+
+@Composable
+fun Address(address : String = "", onLocation: () -> Unit){
+    Row { // 주소
+        IconButton (onClick = onLocation) {
+            Icon(painter = painterResource(id = R.drawable.ic_loc),
+                 contentDescription = "",
+                 modifier = Modifier.size(21.dp))
+        }
+        Text (modifier = Modifier.align(Alignment.CenterVertically)
+                                 .padding(top = 5.dp, bottom = 5.dp)
+                                 .clickable { onLocation.invoke() },
+              text = address)
+    }
+}
+
+@Composable
+fun OperationTime(dayOfOperation : String = "",
+    hoursOfOperation : String = "", ){
+    HorizontalDivider()
+    Row { // 운영시간
+        IconButton({}) {
+            Icon (painter = painterResource(id = R.drawable.ic_time), contentDescription = "")
+        }
+        Row(Modifier.align(Alignment.CenterVertically)) {
+            Text (modifier = Modifier.padding(vertical = 8.dp), text = dayOfOperation)
+            Spacer(Modifier.width(8.dp))
+            Text (modifier = Modifier.padding(vertical = 8.dp), text = hoursOfOperation)
+        }
+    }
+}
+
+@Composable
+private fun Food(isLocationPermissionGranted : Boolean = false,
+                 distance : String = "",
+                 foodType : String,
+                 price : String,
+                 onRequestPermission : ()->Unit = {}){
+    Row { // 음식점 종류, 거리, 가격
+        IconButton({}){ Icon  (modifier = Modifier.size(50.dp).padding(10.dp), painter = painterResource(id = R.drawable.ic_info), contentDescription = "") }
+        Text  (modifier = Modifier.align(Alignment.CenterVertically).clickable(onClick = onRequestPermission),
+            text = "${foodType} • ${if(isLocationPermissionGranted) distance else "(위치 권한 필요.)"} • $price")
+    }
+}
+
+@Composable
+fun Phone(tel : String = "", onPhone : () -> Unit = {}){
+    Row { // 전화번호
+    IconButton (onPhone) { Icon(modifier = Modifier.size(21.dp), painter = painterResource(id = R.drawable.ic_phone), contentDescription = "") }
+    Text (modifier = Modifier.align(Alignment.CenterVertically)
+                             .padding(top = 8.dp, bottom = 8.dp, end = 8.dp)
+                             .clickable { onPhone.invoke() },
+          text = tel)
+    }
+}
+
+@Composable
+private fun WebSite(webSite : String,
+                    onWebSite : ()->Unit ={}){
+    Row { // 웹사이트
+        IconButton(onClick = onWebSite) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_web),
+                contentDescription = null,
+                modifier = Modifier.size(21.dp)
+            )
+        }
+        Text(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .clickable { onWebSite.invoke() },
+            text = webSite
+        )
     }
 }
 
@@ -232,6 +289,7 @@ fun PreviewRestaurantInfo1() {
     )
     RestaurantInfo(/*Preview*/
         modifier = Modifier.verticalScroll(rememberScrollState()),
+        uiState = RestaurantInfoUiState.Success(restaurantInfoData)
     )
 }
 
