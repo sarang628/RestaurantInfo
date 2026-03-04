@@ -1,8 +1,6 @@
 package com.sarang.torang
 
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,9 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sarang.torang.restaurant.defaultShimmerBrush
-import androidx.core.net.toUri
 
 /**
  * ## 음식점 정보
@@ -169,7 +167,6 @@ fun RestaurantInfo(
         }
     }
 }
-
 
 @Composable
 fun RestaurantTitleAndRating(

@@ -30,10 +30,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sarang.torang.di.image.TorangAsyncImageData
 import com.sarang.torang.di.image.provideTorangAsyncImage
 import com.sarang.torang.di.restauarnt_info_di.restaurantInfo
 import com.sarang.torang.repository.FindRepository
@@ -66,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     val viewmodel : RestaurantInfoViewModel = hiltViewModel()
-                    val restaurants by findRepository.restaurants.collectAsStateWithLifecycle()
+                    val restaurants by findRepository.restaurants.collectAsStateWithLifecycle(emptyList())
                     val scaffoldState = rememberBottomSheetScaffoldState()
                     val scope = rememberCoroutineScope()
                     var restaurantId by remember { mutableStateOf(0) }
@@ -90,7 +92,16 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         ){
-                            CompositionLocalProvider(LocalRestaurantInfoImageLoader provides provideTorangAsyncImage(),
+                            CompositionLocalProvider(LocalRestaurantInfoImageLoader provides { modifier, url, iconSize, errorIconSize, contentScale ->
+                                provideTorangAsyncImage().invoke(
+                                TorangAsyncImageData(
+                                    modifier = modifier,
+                                    model = url,
+                                    progressSize = iconSize ?: 30.dp,
+                                    errorIconSize = errorIconSize ?: 30.dp,
+                                    contentScale = contentScale ?: ContentScale.Fit
+                                )
+                            ) },
                                 LocalRestaurantInfo provides restaurantInfo(viewmodel)) {
                                 //RestaurantInfo_(restaurantId = restaurantId)
                                 //RestaurantInfoWithPermissionWithLocation(restaurantId)
