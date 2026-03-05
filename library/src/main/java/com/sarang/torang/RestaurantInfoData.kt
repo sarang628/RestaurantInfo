@@ -8,23 +8,48 @@ sealed interface RestaurantInfoUiState {
 }
 
 data class RestaurantInfoData(
-    val foodType: String = "",
-    val open: String = "",
-    val close: String = "",
-    val address: String = "",
-    val webSite: String = "",
-    val tel: String = "",
-    val imageUrl: String = "",
-    val name: String = "",
-    val hoursOfOperation: List<HoursOfOperation> = arrayListOf(),
-    val rating: Float = 0.0f,
-    val price: String = "",
-    val reviewCount: Int = 0,
-    val lat: Double = 0.0,
-    val lon: Double = 0.0,
-    val myLatitude: Double? = null,
-    val myLongitude: Double? = null
+    val foodType        : String = "",
+    val open            : String = "",
+    val close           : String = "",
+    val address         : String = "",
+    val webSite         : String = "",
+    val tel             : String = "",
+    val imageUrl        : String = "",
+    val name            : String = "",
+    val hoursOfOperation: List<HoursOfOperation> = emptyList(),
+    val rating          : Float = 0.0f,
+    val price           : String = "",
+    val reviewCount     : Int = 0,
+    val lat             : Double = 0.0,
+    val lon             : Double = 0.0,
+    val myLatitude      : Double? = null,
+    val myLongitude     : Double? = null,
+    val photoList       : List<String> = emptyList()
 ) { companion object }
+
+val RestaurantInfoData.photoRowData : List<RestaurantPhotoRowData> get() {
+    val list = mutableListOf<RestaurantPhotoRowData>()
+
+    var index = 0
+
+    while (index < photoList.size) {
+        // Single
+        list.add(RestaurantPhotoRowData.Single(photoList[index]))
+        index++
+
+        // Double
+        if (index + 1 < photoList.size) {
+            list.add(
+                RestaurantPhotoRowData.Double(
+                    photoList[index],
+                    photoList[index + 1]
+                )
+            )
+            index += 2
+        }
+    }
+    return list
+}
 
 val RestaurantInfoData.distanceM: Int? get() = calculateDistance(lat, lon, myLatitude, myLongitude)?.toInt()
 val RestaurantInfoData.distanceKm: Int? get() = calculateDistance(lat, lon, myLatitude, myLongitude)?.div(1000)?.toInt()

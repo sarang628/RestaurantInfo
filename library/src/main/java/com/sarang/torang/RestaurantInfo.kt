@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -94,29 +92,38 @@ fun RestaurantInfo(
         is RestaurantInfoUiState.Success -> {
             uiState.restaurantInfoData.let {
                 Column(modifier = modifier) {
-                    RestaurantPhotoAndLogo(imageUrl             = it.imageUrl,
-                                           name                 = it.name,
+                    RestaurantPhotoAndLogo(name                 = it.name,
                                            rating               = it.rating,
                                            reviewCount          = it.reviewCount,
-                                           progressTintColor    = progressTintColor)
+                                           progressTintColor    = progressTintColor,
+                                           photoRowData         = it.photoRowData)
                     Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                         Food(isLocationPermissionGranted    = isLocationPermissionGranted,
                             distance                        = it.distance,
                             foodType                        = it.foodType,
                             price                           = it.price,
-                            onRequestPermission             = onRequestPermission)
-                        HorizontalDivider()
-                        Address(address = it.address, onLocation = onLocation)
-                        HorizontalDivider()
-                        WebSite(it.webSite, onWebSite = { goWebSite(context, it.webSite) })
+                            onRequestPermission             = onRequestPermission,
+                            isStart                         = 0)
+                        Spacer(Modifier.height(1.dp))
+                        Address(address = it.address,
+                                onLocation = onLocation,
+                                isStart = 1)
+                        Spacer(Modifier.height(1.dp))
+                        WebSite(webSite = it.webSite,
+                                onWebSite = { goWebSite(context, it.webSite) },
+                                isStart = 1)
                         if(!it.isEmptyOperation())
                         {
+                            Spacer(Modifier.height(1.dp))
                             OperationTime(dayOfOperation = it.toDayOfOperation(),
-                                hoursOfOperation = it.toHoursOfOperation())
+                                          hoursOfOperation = it.toHoursOfOperation(),
+                                          isStart = 1)
                         }
-                        HorizontalDivider()
-                        Phone(tel = it.tel, onPhone = { call(context, it.tel)})
-                        HorizontalDivider()
+                        Spacer(Modifier.height(1.dp))
+                        Phone(tel = it.tel,
+                              onPhone = { call(context, it.tel)},
+                              isStart = 2)
+                        Spacer(Modifier.height(1.dp))
                     }
                     //@formatter:on
                 }
@@ -126,22 +133,19 @@ fun RestaurantInfo(
 }
 
 @Composable
-fun RestaurantPhotoAndLogo(imageUrl : String = "",
-                           name : String = "",
-                           rating: Float = 0f,
-                           reviewCount: Int = 0,
-                           progressTintColor: Color? = null){
+fun RestaurantPhotoAndLogo(name                 : String        = "",
+                           rating               : Float         = 0f,
+                           reviewCount          : Int           = 0,
+                           progressTintColor    : Color?        = null,
+                           photoRowData         : List<RestaurantPhotoRowData> = emptyList()){
     Box (modifier = Modifier.fillMaxWidth().height(300.dp)){ // 음식점명 + 평점 박스
-        if(imageUrl.isNotEmpty())
-            LocalRestaurantInfoImageLoader.current.invoke(Modifier.fillMaxSize(), imageUrl, null, null, ContentScale.Crop)
+        RestaurantPhotoRow(modifier = Modifier.height(300.dp), list = photoRowData)
 
-        PreviewRestaurantPhotoRow()
-
-        RestaurantTitleAndRating  (modifier = Modifier.align(Alignment.BottomEnd),
-                                   restaurantName = name,
-                                   rating = rating,
-                                   reviewCount = reviewCount,
-                                   progressTintColor = progressTintColor)
+        RestaurantTitleAndRating(modifier           = Modifier.align(Alignment.BottomEnd),
+                                 restaurantName     = name,
+                                 rating             = rating,
+                                 reviewCount        = reviewCount,
+                                 progressTintColor  = progressTintColor)
     }
 }
 fun goWebSite(context : Context, webSite : String){
@@ -157,10 +161,11 @@ fun call(context : Context, tel : String){
 }
 
 @Composable
-fun Address(address : String = "", onLocation: () -> Unit){
+fun Address(address : String = "", onLocation: () -> Unit,
+            isStart : Int = 0){
     Row(Modifier.fillMaxWidth()
-        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-        .background(color = MaterialTheme.colorScheme.tertiary)) { // 주소
+        .clip(shape(isStart))
+        .background(color = MaterialTheme.colorScheme.inverseOnSurface)) { // 주소
         IconButton (onClick = onLocation) {
             Icon(painter = painterResource(id = R.drawable.ic_loc),
                  contentDescription = "",
@@ -175,11 +180,11 @@ fun Address(address : String = "", onLocation: () -> Unit){
 
 @Composable
 fun OperationTime(dayOfOperation : String = "",
-    hoursOfOperation : String = "", ){
-    HorizontalDivider()
+    hoursOfOperation : String = "",
+                  isStart : Int = 0){
     Row(Modifier.fillMaxWidth()
-        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-        .background(color = MaterialTheme.colorScheme.tertiary)) { // 운영시간
+        .clip(shape(isStart))
+        .background(color = MaterialTheme.colorScheme.inverseOnSurface)) { // 운영시간
         IconButton({}) {
             Icon (painter = painterResource(id = R.drawable.ic_time), contentDescription = "")
         }
@@ -191,17 +196,22 @@ fun OperationTime(dayOfOperation : String = "",
     }
 }
 
+private fun shape(isStart : Int = 0) : RoundedCornerShape = RoundedCornerShape(topStart = if(isStart == 0)8.dp else 0.dp,
+                                                                       topEnd = if(isStart == 0)8.dp else 0.dp,
+                                                                       bottomStart = if(isStart == 2)8.dp else 0.dp,
+                                                                       bottomEnd = if(isStart == 2)8.dp else 0.dp)
+
 @Composable
 private fun Food(isLocationPermissionGranted : Boolean = false,
                  distance : String = "",
                  foodType : String,
                  price : String,
                  onRequestPermission : ()->Unit = {},
-                 isStart : Boolean = false
+                 isStart : Int = 0
 ){
     Row(Modifier.fillMaxWidth()
-                .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-                .background(color = MaterialTheme.colorScheme.tertiary)
+                .clip(shape(isStart))
+                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
 
     ) { // 음식점 종류, 거리, 가격
         IconButton({}){ Icon  (modifier = Modifier.size(50.dp).padding(10.dp), painter = painterResource(id = R.drawable.ic_info), contentDescription = "") }
@@ -211,10 +221,12 @@ private fun Food(isLocationPermissionGranted : Boolean = false,
 }
 
 @Composable
-fun Phone(tel : String = "", onPhone : () -> Unit = {}){
+fun Phone(tel : String = "",
+          onPhone : () -> Unit = {},
+          isStart : Int = 0){
     Row(Modifier.fillMaxWidth()
-        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-        .background(color = MaterialTheme.colorScheme.tertiary)) { // 전화번호
+        .clip(shape(isStart))
+        .background(color = MaterialTheme.colorScheme.inverseOnSurface)) { // 전화번호
     IconButton (onPhone) { Icon(modifier = Modifier.size(21.dp), painter = painterResource(id = R.drawable.ic_phone), contentDescription = "") }
     Text (modifier = Modifier.align(Alignment.CenterVertically)
                              .padding(top = 8.dp, bottom = 8.dp, end = 8.dp)
@@ -225,10 +237,11 @@ fun Phone(tel : String = "", onPhone : () -> Unit = {}){
 
 @Composable
 private fun WebSite(webSite : String,
-                    onWebSite : ()->Unit ={}){
+                    onWebSite : ()->Unit ={},
+                    isStart : Int = 0){
     Row(Modifier.fillMaxWidth()
-        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-        .background(color = MaterialTheme.colorScheme.tertiary)) { // 웹사이트
+        .clip(shape(isStart))
+        .background(color = MaterialTheme.colorScheme.inverseOnSurface)) { // 웹사이트
         IconButton(onClick = onWebSite) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_web),
